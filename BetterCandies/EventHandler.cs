@@ -100,7 +100,7 @@ namespace BetterCandies
             EffectType randomEffect = effects[Random.Next(effects.Length)];
             player.EnableEffect(randomEffect, 10); // Apply effect for 10 seconds
             Timing.CallDelayed(10f, () => player.DisableEffect(randomEffect));
-            ShowHint(player, $"You are {randomEffect.ToString().ToLower()}!");
+            ShowHint(player, $"You got the {randomEffect.ToString().ToLower()} effect!");
             Log.Debug($"{player.Nickname} received effect {randomEffect} for 10 seconds after eating a candy.");
         }
 
