@@ -23,7 +23,7 @@ When a player consumes a candy from SCP-330, one of the following effects will o
 
 ## Installation
 
-1. Download the latest version of the plugin from the [Releases](https://github.com/Mruczek2137/bettercandies/releases) page.
+1. Download the latest version of the plugin from the [Releases](https://github.com/Mruczek2137/better-candies/releases) page.
 2. Place the downloaded DLL file in your server's `plugins` directory.
 3. Restart your server.
 
