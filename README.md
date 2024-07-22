@@ -36,4 +36,4 @@ A configuration file will be generated on the first run of the plugin. You can m
 ```yaml
 better_candies:
   is_enabled: true
-  show_hints: tru
+  show_hints: true
