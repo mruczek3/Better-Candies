@@ -23,8 +23,6 @@ When a player consumes a candy from SCP-330, one of the following effects will o
 2. Place the downloaded DLL file in your server Exiled `plugins` directory.
 3. Restart your server.
 
-## Downloads
-Downloads: 0
 
 ## Configuration
 
