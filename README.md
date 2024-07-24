@@ -45,3 +45,8 @@ better_candies:
   decrease_size_chance: 5
   random_effect_chance: 50
   spawn_grenade_chance: 5
+```
+
+## Downloads
+<img src="https://img.shields.io/badge/dynamic/json?color=yellow&label=downloads&query=$.assets[0].download_count&url=https://api.github.com/repos/Mruczek2137/Better-Candies/releases/latest" alt="Downloads" width="150"/>
+
