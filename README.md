@@ -47,6 +47,8 @@ better_candies:
   spawn_grenade_chance: 5
 ```
 
-## Downloads
-<img src="https://img.shields.io/badge/dynamic/json?color=yellow&label=downloads&query=$.assets[0].download_count&url=https://api.github.com/repos/Mruczek2137/Better-Candies/releases/latest" alt="Downloads" width="150"/>
+## Support 
 
+**If you have any problem with the plugin, please create an issue and I will be happy to help you**
+
+[**ISSUES**](https://github.com/Mruczek2137/Better-Candies/issues)
