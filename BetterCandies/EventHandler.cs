@@ -5,19 +5,21 @@ using System.Linq;
 using Exiled.API.Enums;
 using Exiled.API.Features.Items;
 using MEC;
-using Exiled.Events;
+using UnityEngine;
 using Exiled.Events.EventArgs.Player;
 
 namespace BetterCandies
 {
     public class EventHandler
     {
-        private static readonly Random Random = new Random();
+        private static readonly System.Random Random = new System.Random();
         private readonly Config config;
+        private readonly Translations translations;
 
-        public EventHandler(Config config)
+        public EventHandler(Config config, Translations translations)
         {
             this.config = config;
+            this.translations = translations;
         }
 
         public void OnUsedItem(UsedItemEventArgs ev)
@@ -26,42 +28,51 @@ namespace BetterCandies
             {
                 Log.Debug($"{ev.Player.Nickname} used a candy!");
 
-                // Select effect
-                int effect = Random.Next(12);
+                int totalChance = config.KillChance + config.GainHealthChance + config.RandomKeycardChance +
+                                  config.RandomFirearmChance + config.TeleportChance + config.DecreaseSizeChance +
+                                  config.RandomEffectChance;
 
-                if (effect == 0)
+                int roll = Random.Next(totalChance);
+
+                if (roll < config.KillChance)
                 {
                     KillPlayer(ev.Player);
-                    ShowHint(ev.Player, "You died!");
+                    ShowHint(ev.Player, translations.DiedHint);
                 }
-                else if (effect == 2)
+                else if (roll < config.KillChance + config.GainHealthChance)
                 {
                     AddHealth(ev.Player, 50);
-                    ShowHint(ev.Player, "You gained 50 health!");
+                    ShowHint(ev.Player, string.Format(translations.GainedHealthHint, 50));
                 }
-                else if (effect >= 9)
+                else if (roll < config.KillChance + config.GainHealthChance + config.RandomKeycardChance)
                 {
-                    if (effect == 9)
-                    {
-                        GiveRandomKeycard(ev.Player);
-                        ShowHint(ev.Player, "You received a random keycard!");
-                    }
-                    else if (effect == 10)
-                    {
-                        GiveRandomFirearm(ev.Player);
-                        ShowHint(ev.Player, "You received a random firearm!");
-                    }
-                    else if (effect == 11)
-                    {
-                        TeleportToRandomPlayer(ev.Player);
-                        ShowHint(ev.Player, "You were teleported to a random player!");
-                    }
+                    GiveRandomKeycard(ev.Player);
+                    ShowHint(ev.Player, translations.ReceivedKeycardHint);
+                }
+                else if (roll < config.KillChance + config.GainHealthChance + config.RandomKeycardChance + config.RandomFirearmChance)
+                {
+                    GiveRandomFirearm(ev.Player);
+                    ShowHint(ev.Player, translations.ReceivedFirearmHint);
+                }
+                else if (roll < config.KillChance + config.GainHealthChance + config.RandomKeycardChance + config.RandomFirearmChance + config.TeleportChance)
+                {
+                    TeleportToRandomPlayer(ev.Player);
+                    ShowHint(ev.Player, translations.TeleportedHint);
+                }
+                else if (roll < config.KillChance + config.GainHealthChance + config.RandomKeycardChance + config.RandomFirearmChance + config.TeleportChance + config.DecreaseSizeChance)
+                {
+                    DecreaseSize(ev.Player);
                 }
                 else
                 {
                     ApplyRandomEffect(ev.Player);
                 }
             }
+        }
+
+        public void OnDied(DiedEventArgs ev)
+        {
+            ResetSize(ev.Player);
         }
 
         private void ShowHint(Player player, string message)
@@ -88,19 +99,24 @@ namespace BetterCandies
         {
             EffectType[] effects = new EffectType[]
             {
-                EffectType.Blinded,
                 EffectType.Scp207,
-                EffectType.Bleeding,
+                EffectType.Invisible,
                 EffectType.Burned,
-                EffectType.Concussed,
-                EffectType.Deafened,
-                EffectType.Exhausted
+                EffectType.Scp1853,
+                EffectType.Bleeding,
+                EffectType.CardiacArrest,
+                EffectType.Decontaminating,
+                EffectType.Hypothermia,
+                EffectType.Corroding,
+                EffectType.AmnesiaVision,
+                EffectType.Poisoned,
+                EffectType.Traumatized
             };
 
             EffectType randomEffect = effects[Random.Next(effects.Length)];
-            player.EnableEffect(randomEffect, 10); // Apply effect for 10 seconds
+            player.EnableEffect(randomEffect, 15, true); 
             Timing.CallDelayed(10f, () => player.DisableEffect(randomEffect));
-            ShowHint(player, $"You got the {randomEffect.ToString().ToLower()} effect!");
+            ShowHint(player, string.Format(translations.RandomEffectHint, randomEffect.ToString().ToLower()));
             Log.Debug($"{player.Nickname} received effect {randomEffect} for 10 seconds after eating a candy.");
         }
 
@@ -117,7 +133,9 @@ namespace BetterCandies
                 ItemType.KeycardContainmentEngineer,
                 ItemType.KeycardMTFOperative,
                 ItemType.KeycardMTFCaptain,
-                ItemType.KeycardFacilityManager
+                ItemType.KeycardFacilityManager,
+                ItemType.KeycardChaosInsurgency,
+                ItemType.KeycardO5
             };
 
             ItemType randomKeycard = keycards[Random.Next(keycards.Length)];
@@ -134,6 +152,11 @@ namespace BetterCandies
                 ItemType.ParticleDisruptor,
                 ItemType.GunCom45,
                 ItemType.GunFRMG0,
+                ItemType.GunCrossvec,
+                ItemType.GunE11SR,
+                ItemType.GunLogicer,
+                ItemType.GunFSP9,
+                ItemType.GunShotgun
             };
 
             ItemType randomFirearm = firearms[Random.Next(firearms.Length)];
@@ -143,7 +166,7 @@ namespace BetterCandies
 
         private void TeleportToRandomPlayer(Player player)
         {
-            var players = Player.List.Where(p => p != player && !p.IsScp).ToList();
+            var players = Player.List.Where(p => p != player && !p.IsScp && p.IsAlive).ToList();
             if (players.Count == 0)
             {
                 Log.Debug("No available players to teleport to.");
@@ -153,6 +176,24 @@ namespace BetterCandies
             Player randomPlayer = players[Random.Next(players.Count)];
             player.Position = randomPlayer.Position;
             Log.Debug($"{player.Nickname} was teleported to {randomPlayer.Nickname} after eating a candy.");
+        }
+
+        private void DecreaseSize(Player player)
+        {
+            float originalScale = player.Scale.x;
+            float decreasedScale = originalScale * 0.5f;
+
+            player.Scale = new Vector3(decreasedScale, decreasedScale, decreasedScale);
+            Log.Debug($"{player.Nickname}'s size decreased by 50% after eating a candy.");
+
+            ShowHint(player, translations.DecreasedSizeHint);
+        }
+
+        private void ResetSize(Player player)
+        {
+            float originalScale = 1f;
+            player.Scale = new Vector3(originalScale, originalScale, originalScale);
+            Log.Debug($"{player.Nickname}'s size reset to normal after death.");
         }
     }
 }

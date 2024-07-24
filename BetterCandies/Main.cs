@@ -9,8 +9,8 @@ namespace BetterCandies
     {
         public override string Name => "BetterCandies";
         public override string Author => "mruczek :3";
-        public override Version RequiredExiledVersion => new Version(8, 11, 0);
-        public override Version Version => new Version(1, 0, 0);
+        public override Version RequiredExiledVersion => new Version(8, 9, 11);
+        public override Version Version => new Version(1, 1, 0);
 
         public static Main Instance { get; private set; }
 
@@ -19,14 +19,16 @@ namespace BetterCandies
         public override void OnEnabled()
         {
             Instance = this;
-            eventHandler = new EventHandler(Config);
+            eventHandler = new EventHandler(Config, new Translations());
             Exiled.Events.Handlers.Player.UsedItem += eventHandler.OnUsedItem;
+            Exiled.Events.Handlers.Player.Died += eventHandler.OnDied;
             base.OnEnabled();
         }
 
         public override void OnDisabled()
         {
             Exiled.Events.Handlers.Player.UsedItem -= eventHandler.OnUsedItem;
+            Exiled.Events.Handlers.Player.Died -= eventHandler.OnDied;
             eventHandler = null;
             Instance = null;
             base.OnDisabled();
