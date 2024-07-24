@@ -43,8 +43,7 @@ better_candies:
   random_firearm_chance: 5
   teleport_chance: 10
   decrease_size_chance: 5
-  random_effect_chance: 50
-  spawn_grenade_chance: 5
+  random_effect_chance: 55
 ```
 
 ## Support 
