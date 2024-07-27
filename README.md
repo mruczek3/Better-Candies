@@ -1,5 +1,9 @@
 # BetterCandies
 
+
+<a href="https://github.com/Mruczek2137/Better-Candies/releases"><img src="https://img.shields.io/github/v/release/Mruczek2137/Better-Candies?display_name=tag&style=for-the-badge&label=❗ Release 🡆" href="https://github.com/Exiled-Team/EXILED/releases" alt="GitHub Releases"></a>
+<img src="https://img.shields.io/github/downloads/Mruczek2137/Better-Candies/total?style=for-the-badge&logo=github&label= Downloads 🡆" alt="Downloads"> 
+
 BetterCandies is a plugin for SCP: Secret Laboratory that enhances the effects of SCP-330 candies. Each time a player consumes a candy, they experience a random effect. This plugin adds new and exciting effects to make the game more unpredictable and fun. You also have the option of setting your own chance for various effects via config and your own hints via translations
 
 ## Features
