@@ -7,7 +7,7 @@ BetterCandies is a plugin for SCP: Secret Laboratory that enhances the effects o
 When a player consumes a candy from SCP-330, one of the following effects will occur:
 
 1. **Death**: The player dies instantly.
-2. **Random effect**: The player is blinded for 10 seconds.
+2. **Random effect**: Gives the player a random effect for 10 seconds.
 3. **Health Boost**: The player gains 50 health points.
 4. **Random Keycard**: The player receives a random keycard.
 5. **Random Firearm**: The player receives a random firearm.
