@@ -45,7 +45,6 @@ public class Translations : ITranslation
     [Description("Hint shown when the player loses HP")]
     public string LostHealthHint { get; set; } = "You have lost {0} health points!";
 
-    // Nowe tłumaczenia
     [Description("Hint shown when the player is healed to maximum health.")]
     public string HealedToMaxHint { get; set; } = "You were healed to maximum health!";
 
