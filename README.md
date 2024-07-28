@@ -10,16 +10,8 @@ BetterCandies is a plugin for SCP: Secret Laboratory that enhances the effects o
 
 When a player consumes a candy from SCP-330, one of the following effects will occur:
 
-1. **Death**: The player dies instantly.
-2. **Random effect**: Gives the player a random effect for 10 seconds.
-3. **Health Boost**: The player gains 50 health points.
-4. **Random Keycard**: The player receives a random keycard.
-5. **Random Firearm**: The player receives a random firearm.
-6. **Teleportation**: The player is teleported to a random player.
-7. **Size Decrease**: The player shrinks to 50% of their size.
+[**List of all effects and events**](https://github.com/Mruczek2137/Better-Candies/blob/master/AllEffectsAndEvents.md)
 
-
-    **! There are many more effects/features planned to be added !**
 
 ## Installation
 
@@ -30,25 +22,17 @@ When a player consumes a candy from SCP-330, one of the following effects will o
 
 ## Configuration
 
-A configuration file will be generated on the first run of the plugin. You can modify this file to change various settings.
+**The configuration file will be generated the first time you run the plugin. You can modify this file to change various settings such as:**
 
-**! In the next version of the plugin, more configuration options will be added !**
+Chances of particular effects
 
-```yaml
-better_candies:
-  is_enabled: true
-  debug: false
+What weapons cards (and other items) should be added for effects such as random keycard/firearm
 
-  Percentage chance for individual effects.
-  show_hints: true
-  kill_chance: 10
-  gain_health_chance: 10
-  random_keycard_chance: 5
-  random_firearm_chance: 5
-  teleport_chance: 10
-  decrease_size_chance: 5
-  random_effect_chance: 55
-```
+The amount of HP to be added with the health gain effect
+
+and many other useful things
+
+**!! Hints can be changed in the translations file, which should also be generated when adding the plugin !!**
 
 ## Support 
 
