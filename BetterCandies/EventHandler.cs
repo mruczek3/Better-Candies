@@ -7,6 +7,9 @@ using Exiled.API.Features.Items;
 using MEC;
 using UnityEngine;
 using Exiled.Events.EventArgs.Player;
+using Exiled.Events.EventArgs.Scp330;
+using System.Collections.Generic;
+using PlayerRoles;
 
 namespace BetterCandies
 {
@@ -22,52 +25,114 @@ namespace BetterCandies
             this.translations = translations;
         }
 
-        public void OnUsedItem(UsedItemEventArgs ev)
+        public void OnEatenScp330(EatenScp330EventArgs ev)
         {
-            if (ev.Item.Type == ItemType.SCP330)
+            Log.Debug($"{ev.Player.Nickname} used a candy!");
+
+            int totalChance = config.KillChance + config.GainHealthChance + config.RandomKeycardChance +
+                              config.RandomFirearmChance + config.TeleportChance + config.DecreaseSizeChance +
+                              config.RandomEffectChance + config.TransformToScp0492Chance + config.TeleportToRandomScpChance +
+                              config.SwapRoleChance + config.TeleportToRoomChance + config.RandomHealthLossChance +
+                              config.HealToMaxChance + config.GiveRandomHealingItemChance;
+
+            // Added chance to do nothing
+            int nothingRoll = Random.Next(100);
+            if (nothingRoll < config.ChanceToDoNothing)
             {
-                Log.Debug($"{ev.Player.Nickname} used a candy!");
-
-                int totalChance = config.KillChance + config.GainHealthChance + config.RandomKeycardChance +
-                                  config.RandomFirearmChance + config.TeleportChance + config.DecreaseSizeChance +
-                                  config.RandomEffectChance;
-
-                int roll = Random.Next(totalChance);
-
-                if (roll < config.KillChance)
-                {
-                    KillPlayer(ev.Player);
-                    ShowHint(ev.Player, translations.DiedHint);
-                }
-                else if (roll < config.KillChance + config.GainHealthChance)
-                {
-                    AddHealth(ev.Player, 50);
-                    ShowHint(ev.Player, string.Format(translations.GainedHealthHint, 50));
-                }
-                else if (roll < config.KillChance + config.GainHealthChance + config.RandomKeycardChance)
-                {
-                    GiveRandomKeycard(ev.Player);
-                    ShowHint(ev.Player, translations.ReceivedKeycardHint);
-                }
-                else if (roll < config.KillChance + config.GainHealthChance + config.RandomKeycardChance + config.RandomFirearmChance)
-                {
-                    GiveRandomFirearm(ev.Player);
-                    ShowHint(ev.Player, translations.ReceivedFirearmHint);
-                }
-                else if (roll < config.KillChance + config.GainHealthChance + config.RandomKeycardChance + config.RandomFirearmChance + config.TeleportChance)
-                {
-                    TeleportToRandomPlayer(ev.Player);
-                    ShowHint(ev.Player, translations.TeleportedHint);
-                }
-                else if (roll < config.KillChance + config.GainHealthChance + config.RandomKeycardChance + config.RandomFirearmChance + config.TeleportChance + config.DecreaseSizeChance)
-                {
-                    DecreaseSize(ev.Player);
-                }
-                else
-                {
-                    ApplyRandomEffect(ev.Player);
-                }
+                ShowHint(ev.Player, translations.NothingHint);
+                Log.Debug($"{ev.Player.Nickname} ate a candy but nothing happened.");
+                return;
             }
+
+            int roll = Random.Next(totalChance);
+
+            if (roll < config.KillChance)
+            {
+                KillPlayer(ev.Player);
+                ShowHint(ev.Player, translations.DiedHint);
+            }
+            else if (roll < config.KillChance + config.GainHealthChance)
+            {
+                AddHealth(ev.Player, config.HealthGainAmount);
+                ShowHint(ev.Player, string.Format(translations.GainedHealthHint, config.HealthGainAmount));
+            }
+            else if (roll < config.KillChance + config.GainHealthChance + config.RandomKeycardChance)
+            {
+                GiveRandomKeycard(ev.Player);
+                ShowHint(ev.Player, translations.ReceivedKeycardHint);
+            }
+            else if (roll < config.KillChance + config.GainHealthChance + config.RandomKeycardChance + config.RandomFirearmChance)
+            {
+                GiveRandomFirearm(ev.Player);
+                ShowHint(ev.Player, translations.ReceivedFirearmHint);
+            }
+            else if (roll < config.KillChance + config.GainHealthChance + config.RandomKeycardChance + config.RandomFirearmChance + config.TeleportChance)
+            {
+                TeleportToRandomPlayer(ev.Player);
+                ShowHint(ev.Player, translations.TeleportedHint);
+            }
+            else if (roll < config.KillChance + config.GainHealthChance + config.RandomKeycardChance + config.RandomFirearmChance + config.TeleportChance + config.DecreaseSizeChance)
+            {
+                DecreaseSize(ev.Player);
+            }
+            else if (roll < config.KillChance + config.GainHealthChance + config.RandomKeycardChance + config.RandomFirearmChance + config.TeleportChance + config.DecreaseSizeChance + config.RandomEffectChance)
+            {
+                ApplyRandomEffect(ev.Player);
+            }
+            else if (roll < config.KillChance + config.GainHealthChance + config.RandomKeycardChance + config.RandomFirearmChance + config.TeleportChance + config.DecreaseSizeChance + config.RandomEffectChance + config.TransformToScp0492Chance)
+            {
+                TransformToScp0492(ev.Player);
+            }
+            else if (roll < config.KillChance + config.GainHealthChance + config.RandomKeycardChance + config.RandomFirearmChance + config.TeleportChance + config.DecreaseSizeChance + config.RandomEffectChance + config.TransformToScp0492Chance + config.SwapRoleChance)
+            {
+                SwapRoles(ev.Player);
+                ShowHint(ev.Player, translations.SwapRoleHint);
+            }
+            else if (roll < config.KillChance + config.GainHealthChance + config.RandomKeycardChance + config.RandomFirearmChance + config.TeleportChance + config.DecreaseSizeChance + config.RandomEffectChance + config.TransformToScp0492Chance + config.SwapRoleChance + config.TeleportToRandomScpChance)
+            {
+                TeleportToRandomScp(ev.Player);
+            }
+            else if (roll < config.KillChance + config.GainHealthChance + config.RandomKeycardChance + config.RandomFirearmChance + config.TeleportChance + config.DecreaseSizeChance + config.RandomEffectChance + config.TransformToScp0492Chance + config.SwapRoleChance + config.TeleportToRandomScpChance + config.TeleportToRoomChance)
+            {
+                TeleportToRandomRoom(ev.Player);
+            }
+            else if (roll < config.KillChance + config.GainHealthChance + config.RandomKeycardChance + config.RandomFirearmChance + config.TeleportChance + config.DecreaseSizeChance + config.RandomEffectChance + config.TransformToScp0492Chance + config.SwapRoleChance + config.TeleportToRandomScpChance + config.TeleportToRoomChance + config.HealToMaxChance)
+            {
+                HealToMax(ev.Player);
+                ShowHint(ev.Player, translations.HealedToMaxHint);
+            }
+            else
+            {
+                GiveRandomHealingItem(ev.Player);
+                ShowHint(ev.Player, translations.ReceivedHealingItemHint);
+            }
+        }
+
+        private void HealToMax(Player player)
+        {
+            player.Health = player.MaxHealth;
+            Log.Debug($"{player.Nickname} was healed to max health after eating a candy.");
+        }
+
+        private void GiveRandomHealingItem(Player player)
+        {
+            if (config.AvailableHealingItems.Count == 0)
+            {
+                Log.Debug("No available healing items to give.");
+                return;
+            }
+
+            ItemType randomHealingItem = config.AvailableHealingItems[Random.Next(config.AvailableHealingItems.Count)];
+            player.AddItem(randomHealingItem);
+            Log.Debug($"{player.Nickname} received a random healing item: {randomHealingItem} after eating a candy.");
+        }
+
+        private void LoseRandomHealth(Player player)
+        {
+            int lostHealth = Random.Next(1, 99);
+            player.Health -= lostHealth;
+            ShowHint(player, string.Format(translations.LostHealthHint, lostHealth));
+            Log.Debug($"{player.Nickname} lost {lostHealth} health points after eating a candy.");
         }
 
         public void OnDied(DiedEventArgs ev)
@@ -101,65 +166,45 @@ namespace BetterCandies
             {
                 EffectType.Scp207,
                 EffectType.Invisible,
-                EffectType.Burned,
                 EffectType.Scp1853,
-                EffectType.Bleeding,
+                EffectType.Invigorated,
                 EffectType.CardiacArrest,
                 EffectType.Decontaminating,
-                EffectType.Hypothermia,
-                EffectType.Corroding,
-                EffectType.AmnesiaVision,
+                EffectType.PocketCorroding,
+                EffectType.Ghostly,
                 EffectType.Poisoned,
-                EffectType.Traumatized
+                EffectType.SeveredHands
             };
 
             EffectType randomEffect = effects[Random.Next(effects.Length)];
-            player.EnableEffect(randomEffect, 15, true); 
-            Timing.CallDelayed(10f, () => player.DisableEffect(randomEffect));
-            ShowHint(player, string.Format(translations.RandomEffectHint, randomEffect.ToString().ToLower()));
-            Log.Debug($"{player.Nickname} received effect {randomEffect} for 10 seconds after eating a candy.");
+            player.EnableEffect(randomEffect, config.RandomEffectDuration, true);
+            Timing.CallDelayed(config.RandomEffectDuration, () => player.DisableEffect(randomEffect));
+            ShowHint(player, string.Format(translations.RandomEffectHint, randomEffect.ToString().ToLower(), config.RandomEffectDuration));
+            Log.Debug($"{player.Nickname} received effect {randomEffect} for {config.RandomEffectDuration} seconds after eating a candy.");
         }
 
         private void GiveRandomKeycard(Player player)
         {
-            ItemType[] keycards = new ItemType[]
+            if (config.AvailableKeycards.Count == 0)
             {
-                ItemType.KeycardJanitor,
-                ItemType.KeycardScientist,
-                ItemType.KeycardResearchCoordinator,
-                ItemType.KeycardZoneManager,
-                ItemType.KeycardGuard,
-                ItemType.KeycardMTFPrivate,
-                ItemType.KeycardContainmentEngineer,
-                ItemType.KeycardMTFOperative,
-                ItemType.KeycardMTFCaptain,
-                ItemType.KeycardFacilityManager,
-                ItemType.KeycardChaosInsurgency,
-                ItemType.KeycardO5
-            };
+                Log.Debug("No available keycards to give.");
+                return;
+            }
 
-            ItemType randomKeycard = keycards[Random.Next(keycards.Length)];
+            ItemType randomKeycard = config.AvailableKeycards[Random.Next(config.AvailableKeycards.Count)];
             player.AddItem(randomKeycard);
             Log.Debug($"{player.Nickname} received a random keycard: {randomKeycard} after eating a candy.");
         }
 
         private void GiveRandomFirearm(Player player)
         {
-            ItemType[] firearms = new ItemType[]
+            if (config.AvailableFirearms.Count == 0)
             {
-                ItemType.GunA7,
-                ItemType.GunRevolver,
-                ItemType.ParticleDisruptor,
-                ItemType.GunCom45,
-                ItemType.GunFRMG0,
-                ItemType.GunCrossvec,
-                ItemType.GunE11SR,
-                ItemType.GunLogicer,
-                ItemType.GunFSP9,
-                ItemType.GunShotgun
-            };
+                Log.Debug("No available firearms to give.");
+                return;
+            }
 
-            ItemType randomFirearm = firearms[Random.Next(firearms.Length)];
+            ItemType randomFirearm = config.AvailableFirearms[Random.Next(config.AvailableFirearms.Count)];
             player.AddItem(randomFirearm);
             Log.Debug($"{player.Nickname} received a random firearm: {randomFirearm} after eating a candy.");
         }
@@ -194,6 +239,57 @@ namespace BetterCandies
             float originalScale = 1f;
             player.Scale = new Vector3(originalScale, originalScale, originalScale);
             Log.Debug($"{player.Nickname}'s size reset to normal after death.");
+        }
+
+        private void TransformToScp0492(Player player)
+        {
+            player.Role.Set(RoleTypeId.Scp0492);
+            Log.Debug($"{player.Nickname} transformed into SCP-049-2 after eating a candy.");
+            ShowHint(player, translations.TransformedHint);
+        }
+
+        private void TeleportToRandomScp(Player player)
+        {
+            var scps = Player.List.Where(p => p.IsScp && p != player).ToList();
+            if (scps.Count == 0)
+            {
+                Log.Debug("No SCP subjects available to teleport to.");
+                return;
+            }
+
+            Player randomScp = scps[Random.Next(scps.Count)];
+            player.Position = randomScp.Position + Vector3.up;
+            ShowHint(player, translations.TeleportedScpHint);
+            Log.Debug($"{player.Nickname} was teleported to a random SCP subject: {randomScp.Role} after eating a candy.");
+        }
+
+        private void SwapRoles(Player player)
+        {
+            var players = Player.List.Where(p => p != player && p.IsAlive).ToList();
+            if (players.Count == 0)
+            {
+                Log.Debug("No available players to swap roles with.");
+                return;
+            }
+
+            Player randomPlayer = players[Random.Next(players.Count)];
+            RoleTypeId tempRole = player.Role.Type;
+            player.Role.Set(randomPlayer.Role.Type);
+            randomPlayer.Role.Set(tempRole);
+
+            ShowHint(player, translations.SwapRoleHint);
+            ShowHint(randomPlayer, translations.SwappedRoleWithHint);
+
+            Log.Debug($"{player.Nickname} swapped roles with {randomPlayer.Nickname} after eating a candy.");
+        }
+
+        private void TeleportToRandomRoom(Player player)
+        {
+            Room[] rooms = Room.List.ToArray();
+            Room randomRoom = rooms[Random.Next(rooms.Length)];
+            player.Position = randomRoom.Position + Vector3.up;
+            ShowHint(player, translations.TeleportedRoomHint);
+            Log.Debug($"{player.Nickname} was teleported to a random room: {randomRoom.Name} after eating a candy.");
         }
     }
 }
