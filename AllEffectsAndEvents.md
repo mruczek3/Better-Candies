@@ -36,7 +36,6 @@ Poisoned
 
 SeveredHands
 
-
 8.Turning into a zombie - The player turns into scp 049-2
 
 9. Teleport to random scp -  The player teleports to a random scp
