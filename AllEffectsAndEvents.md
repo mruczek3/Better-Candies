@@ -14,8 +14,3 @@
 12. Teleport to random room - The player teleports to a random room
 13. Heal - The player is healed to 100 hp
 14. Random Healing item - The player gets a random healing item (healing items can be set in the config)
-
-
-## ! IMPORTANT !
-
-**Probably no new effects will be added (unless for Christmas/winter updates etc.) or if someone gives a very good suggestion for a new effect/event**
